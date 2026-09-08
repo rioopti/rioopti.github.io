@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descarga de Juegos & Mods</title>
+    <style>
+        /* Estilos generales */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        /* Buscador */
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto 20px auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 2px solid #334155;
+            background-color: #1e293b;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: #38bdf8;
+        }
+
+        /* Categorías / Botones de navegación */
+        .categories {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            border: none;
+            background-color: #1e293b;
+            color: #94a3b8;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background-color: #38bdf8;
+            color: #0f172a;
+        }
+
+        /* Lista de Juegos */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background-color: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #334155;
+            transition: transform 0.2s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+        }
+
+        .game-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+
+        .game-tag {
+            display: inline-block;
+            font-size: 12px;
+            background-color: #0f172a;
+            color: #38bdf8;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            width: fit-content;
+        }
+
+        .download-btn {
+            display: block;
+            text-align: center;
+            background-color: #22c55e;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .download-btn:hover {
+            background-color: #16a34a;
+        }
+
+        .no-results {
+            text-align: center;
+            grid-column: 1 / -1;
+            color: #64748b;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Zona de Descargas</h1>
+        <p>Juegos optimizados, APKs y mods</p>
+    </header>
+
+    <!-- Buscador -->
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar juego u optimización...">
+    </div>
+
+    <!-- Pestañas de categorías -->
+    <div class="categories">
+        <button class="category-btn active" onclick="filterCategory('all')">Todos</button>
+        <button class="category-btn" onclick="filterCategory('celular')">📱 Celular</button>
+        <button class="category-btn" onclick="filterCategory('pc')">💻 PC</button>
+        <button class="category-btn" onclick="filterCategory('emuladores')">🎮 Emuladores</button>
+    </div>
+
+    <!-- Lista donde se mostrarán los juegos -->
+    <div class="games-grid" id="gamesContainer"></div>
+
+    <script>
+        // AQUÍ AGREGAS TU LISTA DE JUEGOS Y ENLACES
+        const games = [
+            {
+                name: "Fortnite Optimizado (Low PC)(Tampoco lo ponga en laptops del gobierno)",
+                category: "pc",
+                url: "https://gofile.io/d/615c6b34-9876-456f-9b3e-dd001418a148"
+            },
+            {
+                name: "Free Fire Max (FPS Boost APK)",
+                category: "celular",
+                url: "https://mediafire.com/file/ejemplo2"
+            },
+            {
+                name: "GTA San Andreas Lite",
+                category: "celular",
+                url: "https://mediafire.com/file/ejemplo3"
+            },
+        
+        ];
+
+        let currentCategory = 'all';
+
+        // Función para renderizar los juegos en la pantalla
+        function renderGames(filterText = '') {
+            const container = document.getElementById('gamesContainer');
+            container.innerHTML = '';
+
+            const filteredGames = games.filter(game => {
+                const matchesCategory = currentCategory === 'all' || game.category === currentCategory;
+                const matchesSearch = game.name.toLowerCase().includes(filterText.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filteredGames.length === 0) {
+                container.innerHTML = '<p class="no-results">No se encontraron juegos en esta sección.</p>';
+                return;
+            }
+
+            filteredGames.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `
+                    <div>
+                        <div class="game-title">${game.name}</div>
+                        <span class="game-tag">${game.category.toUpperCase()}</span>
+                    </div>
+                    <a href="${game.url}" target="_blank" rel="noopener noreferrer" class="download-btn">
+                        Descargar (MediaFire)
+                    </a>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Filtrar por categoría
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            // Actualizar estado activo del botón
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Renderizar de nuevo aplicando el filtro del buscador
+            const searchInput = document.getElementById('searchInput');
+            renderGames(searchInput.value);
+        }
+
+        // Listener para la barra de búsqueda en tiempo real
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            renderGames(e.target.value);
+        });
+
+        // Cargar todos los juegos al iniciar la página
+        renderGames();
+    </script>
+</body>
+</html>
